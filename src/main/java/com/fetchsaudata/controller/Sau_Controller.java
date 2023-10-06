@@ -1,9 +1,5 @@
 package com.fetchsaudata.controller;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.websocket.server.PathParam;
 
@@ -14,19 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fetchsaudata.MyConfig;
-import com.fetchsaudata.bean.DeptConfigS;
-import com.fetchsaudata.bean.DeptConfigT;
-import com.fetchsaudata.exception.CustomException;
+import com.fetchsaudata.bean.JsonBean;
 import com.fetchsaudata.repository.DeptConfigSRepo;
 import com.fetchsaudata.repository.DeptConfigTRepo;
 //import com.fetchsaudata.service.InfoService;
@@ -90,6 +82,15 @@ public class Sau_Controller {
 		ResponseEntity<JSONObject> getfilname = restTemplateService.getbyfilenameData(pkldirectorate, filename, fileno,
 				startIndex, endIndex, branch, discoveryClient);
 		return getfilname;
+
+	}
+
+	@PostMapping(path = "/mergeDoc")
+	public ResponseEntity<String> mergedoc(@RequestBody JsonBean jb, HttpServletRequest request) {
+		
+		 ResponseEntity<String> megeStatus=restTemplateService.mergedoc(jb, request, discoveryClient);
+			return megeStatus;
+
 
 	}
 

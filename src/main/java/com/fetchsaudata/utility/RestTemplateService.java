@@ -2,6 +2,8 @@ package com.fetchsaudata.utility;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,15 +13,20 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import com.fetchsaudata.bean.JsonBean;
+
 public class RestTemplateService {
 
 	@Value("${sauWebService_serviceName}")
 	private String sauWebService;
+	@Value("${mergeWebService_serviceName}")
+	private String mergeWebService;
 	String serviceUriDb;
 	private static Logger log = LoggerFactory.getLogger(RestTemplateService.class);
 
@@ -88,6 +95,26 @@ public class RestTemplateService {
 		return responseEntity;
 	}
 
+	
+	public ResponseEntity<String> mergedoc( JsonBean jb, HttpServletRequest request, DiscoveryClient discoveryClient) {
+		log.info("Inside getbyfilenameData  method");
+		log.info("service name is " + sauWebService);
+		if (serviceUriDb == null)
+			serviceUriDb = serviceUrl(mergeWebService, discoveryClient);
+		String url = serviceUriDb + "/mergeWebService/mergePCase/mergeDoc";
+		log.info("url " + url);
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = getheader();
+	    headers.add("Authorization", request.getHeader("Authorization"));
+	    HttpEntity<JsonBean> entity = new HttpEntity<>(jb, headers);
+	    ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+	    log.info("status: " + responseEntity.getStatusCode());
+		
+	    return responseEntity;
+	}
+
+	
+	
 //	public ResponseEntity<JSONObject> getUserRolesData(DiscoveryClient discoveryClient) {
 //		log.info("Inside getUserRolesData  method");
 //		log.info("service name is " + sauWebService);
